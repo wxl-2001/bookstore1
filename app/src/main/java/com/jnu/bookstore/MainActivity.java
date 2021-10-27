@@ -1,14 +1,20 @@
 package com.jnu.bookstore;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -69,15 +75,17 @@ public class MainActivity extends AppCompatActivity {
             return bookitems.size();
         }
 
-        private class ViewHolder extends RecyclerView.ViewHolder {
+        private class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
             private final ImageView imageView;
             private final TextView textView;
 
-            public ViewHolder(View view) {
-                super(view);
+            public ViewHolder(View itemView) {
+                super(itemView);
 
-                this.imageView=view.findViewById(R.id.image_view_book_cover);
-                this.textView=view.findViewById(R.id.text_view_book_title);
+                this.imageView=itemView.findViewById(R.id.image_view_book_cover);
+                this.textView=itemView.findViewById(R.id.text_view_book_title);
+
+                itemView.setOnCreateContextMenuListener(this);
             }
 
             public ImageView getImageView() {
@@ -86,6 +94,51 @@ public class MainActivity extends AppCompatActivity {
 
             public TextView getTextView() {
                 return textView;
+            }
+
+
+            @Override
+            public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+                int position=getAdapterPosition();
+                MenuItem menuItemAdd=contextMenu.add(Menu.NONE,1,1,"Add"+position);
+                MenuItem menuItemelete=contextMenu.add(Menu.NONE,2,2,"Delete"+position);
+
+                menuItemAdd.setOnMenuItemClickListener(this);
+                menuItemelete.setOnMenuItemClickListener(this);
+            }
+
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                int position= getAdapterPosition();
+                switch(menuItem.getItemId()){
+                    case 1:
+                        View dialagueView= LayoutInflater.from(MainActivity.this).inflate(R.layout.dialogue_input_item,null);
+                        AlertDialog.Builder alertDialogBuiler = new AlertDialog.Builder(MainActivity.this);
+                        alertDialogBuiler.setView(dialagueView);
+
+                        alertDialogBuiler.setPositiveButton("确定",new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                EditText editName=dialagueView.findViewById(R.id.edit_text_name);
+                                bookitems.add(position,new book(editName.getText().toString(),R.drawable.book_2));
+                                MyRecyclerViewAdapter.this.notifyItemInserted(position);
+                            }
+                        });
+                        alertDialogBuiler.setCancelable(false).setNegativeButton ("取消",new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        alertDialogBuiler.create().show();;
+
+                        break;
+                    case 2:
+                        bookitems.remove(position);
+                        MyRecyclerViewAdapter.this.notifyItemRemoved(position);
+                        break;
+                }
+                return false;
             }
         }
     }
