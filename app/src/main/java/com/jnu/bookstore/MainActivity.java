@@ -46,11 +46,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if(requestCode==REQUEST_CODE_EDIT) {
-            String name = data.getStringExtra("name");
-            int position=data.getIntExtra("position",bookitems.size());
-            bookitems.get(position).setTitle(name);
-            //bookitems.add(position,new book(name, R.drawable.book_no_name));
-            recyclerViewAdapter.notifyItemChanged(position);
+            if (resultCode == RESULT_CODE_ADD_DATA) {
+                String name = data.getStringExtra("name");
+                int position = data.getIntExtra("position", bookitems.size());
+                bookitems.get(position).setTitle(name);
+                //bookitems.add(position,new book(name, R.drawable.book_no_name));
+                recyclerViewAdapter.notifyItemChanged(position);
+            }
         }
     }
 
