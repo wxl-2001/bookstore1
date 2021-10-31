@@ -1,12 +1,14 @@
 package com.jnu.bookstore;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -23,7 +25,35 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int RESULT_CODE_ADD_DATA = 996;
+    public static final int REQUEST_CODE_ADD = 123;
+    public static final int REQUEST_CODE_EDIT =REQUEST_CODE_ADD+1;
+
     private List<book> bookitems;
+    private MyRecyclerViewAdapter recyclerViewAdapter;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==REQUEST_CODE_ADD) {
+            if (resultCode == RESULT_CODE_ADD_DATA) {
+                String name = data.getStringExtra("name");
+                int position=data.getIntExtra("position",bookitems.size());
+                bookitems.add(position,new book(name, R.drawable.book_no_name));
+                recyclerViewAdapter.notifyItemInserted(position);
+
+            }
+        }
+        if(requestCode==REQUEST_CODE_EDIT) {
+            String name = data.getStringExtra("name");
+            int position=data.getIntExtra("position",bookitems.size());
+            bookitems.get(position).setTitle(name);
+            //bookitems.add(position,new book(name, R.drawable.book_no_name));
+            recyclerViewAdapter.notifyItemChanged(position);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +64,9 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView mainRecycleView=findViewById(R.id.recycle_view_books);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         mainRecycleView.setLayoutManager(layoutManager);
-        mainRecycleView.setAdapter(new MyRecyclerViewAdapter(getbookitems()));
+
+        recyclerViewAdapter = new MyRecyclerViewAdapter(getbookitems());
+        mainRecycleView.setAdapter(recyclerViewAdapter);
     }
     public void initDate(){
         bookitems= new ArrayList<book>();
@@ -76,6 +108,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
+            public static final int CONTEXT_MENU_ID_ADD = 1;
+            public static final int CONTEXT_MENU_ID_UPDATE = CONTEXT_MENU_ID_ADD+1;
+            public static final int CONTEXT_MENU_ID_DELETE = CONTEXT_MENU_ID_ADD+2;
             private final ImageView imageView;
             private final TextView textView;
 
@@ -100,40 +135,34 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
                 int position=getAdapterPosition();
-                MenuItem menuItemAdd=contextMenu.add(Menu.NONE,1,1,"Add"+position);
-                MenuItem menuItemelete=contextMenu.add(Menu.NONE,2,2,"Delete"+position);
+                MenuItem menuItemAdd=contextMenu.add(Menu.NONE,CONTEXT_MENU_ID_ADD,CONTEXT_MENU_ID_ADD,"Add"+position);
+                MenuItem menuItemEdit=contextMenu.add(Menu.NONE,CONTEXT_MENU_ID_UPDATE,CONTEXT_MENU_ID_UPDATE,"Edit"+position);
+                MenuItem menuItemelete=contextMenu.add(Menu.NONE,CONTEXT_MENU_ID_DELETE,CONTEXT_MENU_ID_DELETE,"Delete"+position);
 
                 menuItemAdd.setOnMenuItemClickListener(this);
+                menuItemEdit.setOnMenuItemClickListener(this);
                 menuItemelete.setOnMenuItemClickListener(this);
             }
 
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 int position= getAdapterPosition();
+                Intent intent;
                 switch(menuItem.getItemId()){
-                    case 1:
-                        View dialagueView= LayoutInflater.from(MainActivity.this).inflate(R.layout.dialogue_input_item,null);
-                        AlertDialog.Builder alertDialogBuiler = new AlertDialog.Builder(MainActivity.this);
-                        alertDialogBuiler.setView(dialagueView);
-
-                        alertDialogBuiler.setPositiveButton("确定",new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                EditText editName=dialagueView.findViewById(R.id.edit_text_name);
-                                bookitems.add(position,new book(editName.getText().toString(),R.drawable.book_2));
-                                MyRecyclerViewAdapter.this.notifyItemInserted(position);
-                            }
-                        });
-                        alertDialogBuiler.setCancelable(false).setNegativeButton ("取消",new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        });
-                        alertDialogBuiler.create().show();;
+                    case CONTEXT_MENU_ID_ADD:
+                        intent=new Intent(MainActivity.this,EditBookActivity.class);
+                        intent.putExtra("position",position);
+                        MainActivity.this.startActivityForResult(intent,REQUEST_CODE_ADD);
 
                         break;
-                    case 2:
+                    case CONTEXT_MENU_ID_UPDATE:
+                        intent=new Intent(MainActivity.this,EditBookActivity.class);
+                        intent.putExtra("name",bookitems.get(position).getTitle());
+                        intent.putExtra("position",position);
+
+                        MainActivity.this.startActivityForResult(intent,REQUEST_CODE_EDIT);
+                        break;
+                    case CONTEXT_MENU_ID_DELETE:
                         bookitems.remove(position);
                         MyRecyclerViewAdapter.this.notifyItemRemoved(position);
                         break;
