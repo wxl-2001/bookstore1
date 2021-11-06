@@ -1,13 +1,9 @@
-package com.jnu.bookstore;
+package com.jnu.bookstore.data;
 
-public class book {
+import java.io.Serializable;
 
+public class book implements Serializable {
     private  int CoverResourceId;
-
-    public void setTitle(String title) {
-        Title = title;
-    }
-
     private String Title;
 
     public book(String name, int pictureId) {
@@ -21,5 +17,12 @@ public class book {
 
     public String getTitle() {
         return Title;
+    }
+
+    public void setTitle(String title) {
+        Title = title;
+    }
+    public void setCoverResourceId(int coverResourceId) {
+        this.CoverResourceId = coverResourceId;
     }
 }
