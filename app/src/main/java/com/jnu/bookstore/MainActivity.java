@@ -57,8 +57,10 @@ public class MainActivity extends AppCompatActivity {
             switch (position) {
                 case 0:
                     return bookFragment.newInstance();
-                default:
+                case 1:
                     return WebViewFragment.newInstance();
+                default:
+                    return MapFragment.newInstance();
             }
         }
         @Override
