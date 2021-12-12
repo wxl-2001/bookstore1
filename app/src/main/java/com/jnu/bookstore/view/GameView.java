@@ -16,11 +16,12 @@ import com.jnu.bookstore.data.CircleSpriter;
 
 import java.util.ArrayList;
 
-public class GameView extends SurfaceView implements SurfaceHolder.Callback{
+public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder surfaceHolder;
 
     public GameView(Context context) {
         super(context);
+        initView();
     }
 
     public GameView(Context context, AttributeSet attrs) {
@@ -48,18 +49,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     private boolean isTouched=false;
     private float touchedX=-1;
     private float touchedY=-1;
-
     @Override
-    public void surfaceCreated(@NonNull SurfaceHolder holder) {
+    public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
+
         drawThread = new DrawThread();
         drawThread.start();
         GameView.this.setOnTouchListener(new OnTouchListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent motionEvent) {
-                if(MotionEvent.ACTION_DOWN==motionEvent.getAction())
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if( MotionEvent.ACTION_DOWN==motionEvent.getAction())
                 {
-                    touchedX=motionEvent.getRawX();
-                    touchedY=motionEvent.getRawY();
+                    touchedX=motionEvent.getX();
+                    touchedY=motionEvent.getY();
                     isTouched=true;
                 }
                 return false;
@@ -68,38 +69,41 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     @Override
-    public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2) {
 
     }
 
     @Override
-    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+    public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
         drawThread.myStop();
+        try {
+            drawThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private class DrawThread extends Thread
     {
-        private ArrayList<CircleSpriter> spriters=new ArrayList<>();
+        private final ArrayList<CircleSpriter> spriters=new ArrayList<>();
         private boolean isStopped=false;
         public DrawThread()
         {
             spriters.add(new CircleSpriter(100,100,100,GameView.this.getWidth(),GameView.this.getHeight()));
             spriters.add(new CircleSpriter(300,300,100,GameView.this.getWidth(),GameView.this.getHeight()));
-
         }
 
-
-        private void myStop(){
+        public void myStop()
+        {
             isStopped=true;
         }
-
         @Override
         public void run() {
             super.run();
             Canvas canvas = null;
             int hitCount=0;
 
-            while (!isStopped) {
+            while(!isStopped) {
                 try {
                     canvas = surfaceHolder.lockCanvas();
                     canvas.drawColor(Color.GRAY);
@@ -111,6 +115,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                                 hitCount++;
                             }
                         }
+
                     }
                     for(int index=0;index<spriters.size();index++)
                     {
@@ -142,4 +147,5 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             }
         }
     }
+
 }
