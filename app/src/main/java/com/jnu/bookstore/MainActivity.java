@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
                     case 2:
                         tab.setText("卖家");
                         break;
+                    case 3:
+                        tab.setText("游戏");
+                        break;
                 }
             }
         });
@@ -59,13 +62,15 @@ public class MainActivity extends AppCompatActivity {
                     return bookFragment.newInstance();
                 case 1:
                     return WebViewFragment.newInstance();
-                default:
+                case 2:
                     return MapFragment.newInstance();
+                default:
+                    return GameFragment.newInstance();
             }
         }
         @Override
         public int getItemCount() {
-            return 3;
+            return 4;
         }
 
     }
