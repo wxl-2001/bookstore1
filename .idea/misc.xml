@@ -3,6 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/wxl/AndroidStudioProjects/bookstore/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2265" />
+        <entry key="..\:/Users/wxl/AndroidStudioProjects/bookstore/app/src/main/res/layout/activity_edit_book.xml" value="0.20380434782608695" />
+        <entry key="..\:/Users/wxl/AndroidStudioProjects/bookstore/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/wxl/AndroidStudioProjects/bookstore/app/src/main/res/layout/book_item_holder.xml" value="0.20380434782608695" />
+        <entry key="..\:/Users/wxl/AndroidStudioProjects/bookstore/app/src/main/res/layout/dialogue_input_item.xml" value="0.12129629629629629" />
+        <entry key="..\:/Users/wxl/AndroidStudioProjects/bookstore/app/src/main/res/layout/fragment_book.xml" value="0.1" />
+        <entry key="..\:/Users/wxl/AndroidStudioProjects/bookstore/app/src/main/res/layout/fragment_game.xml" value="0.1" />
+        <entry key="..\:/Users/wxl/AndroidStudioProjects/bookstore/app/src/main/res/layout/fragment_map.xml" value="0.12335359675785208" />
+        <entry key="..\:/Users/wxl/AndroidStudioProjects/bookstore/app/src/main/res/layout/fragment_web_view.xml" value="0.12335359675785208" />
         <entry key="..\:/Users/yang/AndroidStudioProjects/bookstore/app/src/main/res/layout/activity_edit_book.xml" value="0.15353260869565216" />
         <entry key="..\:/Users/yang/AndroidStudioProjects/bookstore/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Users/yang/AndroidStudioProjects/bookstore/app/src/main/res/layout/activity_main2.xml" value="0.20364583333333333" />
